@@ -1,1 +1,1 @@
-# Spring-MVC
+# Spring-Hibernate
