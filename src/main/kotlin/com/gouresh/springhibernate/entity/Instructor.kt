@@ -4,15 +4,29 @@ import jakarta.persistence.*
 
 @Entity
 @Table(name = "instructor")
-data class Instructor(
+class Instructor(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id") val id: Long? = null,
-    @Column(name = "first_name") val firstName: String?,
-    @Column(name = "last_name") val lastName: String?,
-    @Column(name = "email") val email: String?,
+    @Column(name = "first_name") var firstName: String?,
+    @Column(name = "last_name") var lastName: String?,
+    @Column(name = "email") var email: String?,
 
-    @OneToOne(cascade = [CascadeType.ALL] , fetch = FetchType.LAZY)
+    @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "instructor_detail_id")
-    val instructorDetail: InstructorDetail
-)
+    var instructorDetail: InstructorDetail,
+    @OneToMany(
+        mappedBy = "instructor",
+        fetch = FetchType.LAZY,
+        cascade = [CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE]
+    )
+    var courseList: MutableList<Course> = mutableListOf()
+) {
+
+    // bidirection handling
+    fun addCourse(course: Course) {
+        courseList.add(course)
+        course.instructor = this
+    }
+}
+
